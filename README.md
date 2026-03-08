@@ -205,9 +205,10 @@ Conformance test fixtures are in [fixtures/](fixtures/).
 
 ---
 
-## Reference Implementation
+## Implementations
 
-- **[json-diff-ts](https://github.com/ltwlf/json-diff-ts)** — TypeScript library for computing, applying, and reverting JSON changesets. The originating implementation from which JSON Delta was derived; evolving toward full conformance.
+- **[json-diff-ts](https://github.com/ltwlf/json-diff-ts)** — TypeScript library for computing, applying, and reverting JSON changesets. The originating implementation from which JSON Delta was derived.
+- **[json-delta-py](https://github.com/ltwlf/json-delta-py)** — Python library implementing the full JSON Delta v0 specification. Level 2 (Reversible) conformance.
 
 ---
 
