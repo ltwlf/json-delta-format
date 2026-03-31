@@ -1,6 +1,6 @@
-# JSON Delta Conformance Fixtures
+# JSON‑Atom Format Conformance Fixtures
 
-This directory contains test fixtures for verifying conformance with the JSON Delta specification.
+This directory contains test fixtures for verifying conformance with the JSON‑Atom Format specification.
 
 ## Fixture Format
 
@@ -13,7 +13,7 @@ Each fixture is a JSON file with the following structure:
   "source": { ... },
   "target": { ... },
   "delta": {
-    "format": "json-delta",
+    "format": "json-atom",
     "version": 1,
     "operations": [ ... ]
   },
@@ -30,7 +30,7 @@ Each fixture is a JSON file with the following structure:
 | `description` | string | Yes | Human-readable description of what the fixture tests. |
 | `source` | any | Yes | The source document (before changes). May be `null` for document creation tests. |
 | `target` | any | Yes | The expected target document (after changes). May be `null` for document deletion tests. |
-| `delta` | object | Yes | A valid JSON Delta document. |
+| `delta` | object | Yes | A valid JSON‑Atom Format document. |
 | `computeHints` | object | No | Non-normative hints for diff implementations (e.g., array keys). |
 | `level` | integer | Yes | Conformance level: `1` (Apply) or `2` (Reversible). |
 

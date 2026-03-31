@@ -1,8 +1,8 @@
-# JSON Delta
+# JSON‑Atom Format
 
-**JSON Delta** is a language-agnostic format for representing **atomic changes to JSON documents**.
+**JSON‑Atom Format** is a language-agnostic format for representing **atomic changes to JSON documents**.
 
-It defines three operations — `add`, `remove`, and `replace` — addressed by [JSONPath](https://www.rfc-editor.org/rfc/rfc9535)-based paths that support **identity-based array element selection**. This is the key capability that sets JSON Delta apart from existing standards like [RFC 6902 (JSON Patch)](https://www.rfc-editor.org/rfc/rfc6902) and [RFC 7396 (JSON Merge Patch)](https://www.rfc-editor.org/rfc/rfc7396).
+It defines three operations — `add`, `remove`, and `replace` — addressed by [JSONPath](https://www.rfc-editor.org/rfc/rfc9535)-based paths that support **identity-based array element selection**. This is the key capability that sets JSON‑Atom Format apart from existing standards like [RFC 6902 (JSON Patch)](https://www.rfc-editor.org/rfc/rfc6902) and [RFC 7396 (JSON Merge Patch)](https://www.rfc-editor.org/rfc/rfc7396).
 
 Rather than storing full JSON snapshots, systems can record a sequence of structured change operations and reconstruct state at any point in time. A JSON document can therefore be treated as a **materialized view over an ordered sequence of delta operations**.
 
@@ -34,11 +34,11 @@ Target document:
 }
 ```
 
-JSON Delta:
+JSON‑Atom Format:
 
 ```json
 {
-  "format": "json-delta",
+  "format": "json-atom",
   "version": 1,
   "operations": [
     { "op": "replace", "path": "$.user.name", "value": "Anna", "oldValue": "Alice" },
@@ -57,23 +57,23 @@ Note how array elements are addressed by **key-based identity** (`@.id=='1'`) ra
 
 ---
 
-## Why JSON Delta?
+## Why JSON‑Atom Format?
 
 ### vs. RFC 6902 (JSON Patch)
 
 [RFC 6902](https://www.rfc-editor.org/rfc/rfc6902) uses [RFC 6901 JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901) for paths, which addresses array elements **only by index** (`/items/0`). If an array is reordered or an element is inserted, every index-based path may become invalid.
 
-JSON Delta uses JSONPath filter expressions (`$.items[?(@.id=='1')]`) to address array elements by a **stable identity key**. This is the fundamental capability gap that JSON Delta fills.
+JSON‑Atom Format uses JSONPath filter expressions (`$.items[?(@.id=='1')]`) to address array elements by a **stable identity key**. This is the fundamental capability gap that JSON‑Atom Format fills.
 
 ### vs. RFC 7396 (JSON Merge Patch)
 
 [RFC 7396](https://www.rfc-editor.org/rfc/rfc7396) merges changes by overlaying partial documents. It cannot represent `null` as a value (it means "delete"), cannot express array element changes atomically, and cannot produce reversible changesets.
 
-JSON Delta represents each change as a discrete, atomic operation with an explicit path. It supports `null` as a first-class value and enables reversibility through optional `oldValue` fields.
+JSON‑Atom Format represents each change as a discrete, atomic operation with an explicit path. It supports `null` as a first-class value and enables reversibility through optional `oldValue` fields.
 
 ### Summary
 
-| Capability | RFC 6902 | RFC 7396 | JSON Delta |
+| Capability | RFC 6902 | RFC 7396 | JSON‑Atom Format |
 |---|---|---|---|
 | Atomic operations | Yes | No | Yes |
 | Array identity by key | No | No | **Yes** |
@@ -102,7 +102,7 @@ JSON Delta represents each change as a discrete, atomic operation with an explic
 
 ```json
 {
-  "format": "json-delta",
+  "format": "json-atom",
   "version": 1,
   "operations": [ ... ]
 }
@@ -110,7 +110,7 @@ JSON Delta represents each change as a discrete, atomic operation with an explic
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `format` | string | Yes | Must be `"json-delta"`. Self-identifying discriminator. |
+| `format` | string | Yes | Must be `"json-atom"`. Self-identifying discriminator. |
 | `version` | integer | Yes | Format version. Currently `1`. |
 | `operations` | array | Yes | Ordered array of operation objects. |
 
@@ -118,9 +118,9 @@ Additional properties are allowed and preserved. Properties prefixed with `x_` a
 
 ---
 
-## JSON Delta Path
+## JSON‑Atom Path
 
-JSON Delta uses a constrained subset of JSONPath ([RFC 9535](https://www.rfc-editor.org/rfc/rfc9535)) with six productions:
+JSON‑Atom Format uses a constrained subset of JSONPath ([RFC 9535](https://www.rfc-editor.org/rfc/rfc9535)) with six productions:
 
 | Production | Example | Description |
 |---|---|---|
@@ -139,7 +139,7 @@ JSON Delta uses a constrained subset of JSONPath ([RFC 9535](https://www.rfc-edi
 
 ## Design Goals
 
-JSON Delta is designed to be:
+JSON‑Atom Format is designed to be:
 
 - **Deterministic** — The same inputs produce the same logical delta.
 - **Atomic** — Each operation targets exactly one location.
@@ -150,7 +150,7 @@ JSON Delta is designed to be:
 
 ## Non-Goals
 
-JSON Delta intentionally does **not** define:
+JSON‑Atom Format intentionally does **not** define:
 
 - A diff algorithm (how to compute deltas)
 - A comparison strategy (how to detect semantic changes)
@@ -172,11 +172,11 @@ JSON Delta intentionally does **not** define:
 
 ## Extensibility
 
-JSON Delta supports extensions through additional properties on both the envelope and individual operations:
+JSON‑Atom Format supports extensions through additional properties on both the envelope and individual operations:
 
 ```json
 {
-  "format": "json-delta",
+  "format": "json-atom",
   "version": 1,
   "operations": [
     {
@@ -207,14 +207,14 @@ Conformance test fixtures are in [fixtures/](fixtures/).
 
 ## Implementations
 
-- **[json-diff-ts](https://github.com/ltwlf/json-diff-ts)** — TypeScript library for computing, applying, and reverting JSON changesets. The originating implementation from which JSON Delta was derived.
-- **[json-delta-py](https://github.com/ltwlf/json-delta-py)** — Python library implementing the full JSON Delta v0 specification. Level 2 (Reversible) conformance.
+- **[json-diff-ts](https://github.com/ltwlf/json-diff-ts)** — TypeScript library for computing, applying, and reverting JSON changesets. The originating implementation from which JSON‑Atom Format was derived.
+- **[json-atom](https://github.com/ltwlf/json-atom)** — Python library implementing the full JSON‑Atom Format v0 specification. Level 2 (Reversible) conformance.
 
 ---
 
 ## Specification Status
 
-**Draft v0** — JSON Delta is a draft specification. The core format is stable, but details may evolve before a v1 release. Feedback and contributions are welcome.
+**Draft v0** — JSON‑Atom Format is a draft specification. The core format is stable, but details may evolve before a v1 release. Feedback and contributions are welcome.
 
 ---
 
