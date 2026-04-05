@@ -74,11 +74,21 @@ apply(fixture.target, inverse(fixture.delta)) == fixture.source
 
 In addition to the Level 1 check, compute the inverse of the delta and apply it to the target document. The result MUST equal the source document.
 
-Level 2 fixtures include `oldValue` on every `replace` and `remove` operation, making the delta fully reversible.
+Level 2 fixtures include `oldValue` on every `replace` and `remove` operation (and `value` on every `copy`), making the delta fully reversible.
 
 ## Fixture Index
 
 | File | Level | Description |
 | --- | --- | --- |
 | `basic-replace.json` | 2 | Replace a top-level string property |
-| `keyed-array-update.json` | 2 | Update, add, and remove elements in a keyed array |
+| `nested-replace.json` | 2 | Replace a deeply nested property |
+| `property-add-remove.json` | 2 | Add and remove object properties |
+| `type-change-replace.json` | 2 | Replace a value with a different type |
+| `root-operations.json` | 1 | Create root document value |
+| `index-array-operations.json` | 2 | Add, remove, and replace in index-based arrays |
+| `value-filter-array.json` | 2 | Add and remove using value filters |
+| `keyed-array-update.json` | 2 | Update, add, and remove in keyed arrays |
+| `move-rename-property.json` | 2 | Move (rename) an object property |
+| `move-keyed-array-element.json` | 2 | Move an element between keyed arrays |
+| `copy-property.json` | 2 | Copy a property value to another location |
+| `mixed-operations.json` | 2 | All five operation types in one delta |
