@@ -2,7 +2,7 @@
 
 **JSON‑Atom Format** is a language-agnostic format for representing **atomic changes to JSON documents**.
 
-It defines three operations — `add`, `remove`, and `replace` — addressed by [JSONPath](https://www.rfc-editor.org/rfc/rfc9535)-based paths that support **identity-based array element selection**. This is the key capability that sets JSON‑Atom Format apart from existing standards like [RFC 6902 (JSON Patch)](https://www.rfc-editor.org/rfc/rfc6902) and [RFC 7396 (JSON Merge Patch)](https://www.rfc-editor.org/rfc/rfc7396).
+It defines five operations — `add`, `remove`, `replace`, `move`, and `copy` — addressed by [JSONPath](https://www.rfc-editor.org/rfc/rfc9535)-based paths that support **identity-based array element selection**. This is the key capability that sets JSON‑Atom Format apart from existing standards like [RFC 6902 (JSON Patch)](https://www.rfc-editor.org/rfc/rfc6902) and [RFC 7396 (JSON Merge Patch)](https://www.rfc-editor.org/rfc/rfc7396).
 
 Rather than storing full JSON snapshots, systems can record a sequence of structured change operations and reconstruct state at any point in time. A JSON document can therefore be treated as a **materialized view over an ordered sequence of delta operations**.
 
@@ -77,6 +77,7 @@ JSON‑Atom Format represents each change as a discrete, atomic operation with a
 |---|---|---|---|
 | Atomic operations | Yes | No | Yes |
 | Array identity by key | No | No | **Yes** |
+| Move / Copy | Yes | No | **Yes** |
 | Reversible | No | No | **Yes** (with `oldValue`) |
 | `null` as value | Yes | No | Yes |
 | Self-identifying document | No | No | **Yes** (`format` field) |
@@ -91,10 +92,17 @@ JSON‑Atom Format represents each change as a discrete, atomic operation with a
 | `add` | Add a value at a path that does not exist | `op`, `path`, `value` | |
 | `remove` | Remove a value at a path that exists | `op`, `path` | `oldValue` |
 | `replace` | Replace the value at a path with a new value | `op`, `path`, `value` | `oldValue` |
+| `move` | Move a value from one path to another | `op`, `from`, `path` | |
+| `copy` | Copy a value from one path to another | `op`, `from`, `path` | `value` |
 
-- **`value`** always means the new value (present on `add` and `replace`).
+- **`value`** always means the new value (present on `add` and `replace`; optional on `copy` for reversibility).
 - **`oldValue`** always means the previous value (present on `remove` and `replace` for reversible deltas).
-- A delta is **reversible** when every `replace` and `remove` operation includes `oldValue`.
+- **`from`** is the source path for `move` and `copy` operations.
+- A delta is **reversible** when every `replace`/`remove` includes `oldValue` and every `copy` includes `value`.
+
+**Move** atomically removes a value from `from` and adds it at `path`. Inversion is symmetric: `move(from, path)` → `move(path, from)`.
+
+**Copy** reads a value at `from` and deep-clones it to `path`. The source is unchanged. The optional `value` field enables reversibility (the inverse is `remove` at `path`).
 
 ---
 
